@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - Hillscastleinnn</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">HILLSCASTLEINNN</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">HOME</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">ABOUT</a></li>
+                    <li class="nav-item"><a class="nav-link" href="rooms.html">ROOMS</a></li>
+                    <li class="nav-item"><a class="nav-link" href="services.html">SERVICES</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="gallery.html">GALLERY</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">CONTACT</a></li>
+                </ul>
+                <button class="btn btn-book">BOOK NOW</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="page-header-image">
+            <img src="https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=1920&h=600&fit=crop" alt="Hotel Gallery">
+            <div class="page-header-overlay"></div>
+        </div>
+        <div class="page-header-content">
+            <div class="container">
+                <h1 class="page-title">Gallery</h1>
+                <p class="page-subtitle">Explore our beautiful spaces and amenities</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="page-content-section py-5">
+        <div class="container">
+            <!-- Gallery Filter -->
+            <div class="gallery-filter text-center mb-5">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="rooms">Rooms</button>
+                <button class="filter-btn" data-filter="dining">Dining</button>
+                <button class="filter-btn" data-filter="spa">Spa & Wellness</button>
+                <button class="filter-btn" data-filter="events">Events</button>
+            </div>
+
+            <!-- Gallery Grid -->
+            <div class="row g-4 gallery-grid">
+                <!-- Rooms -->
+                <div class="col-md-4 gallery-item" data-category="rooms">
+                    <div class="gallery-card">
+                        <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&h=500&fit=crop" alt="Luxury Room">
+                        <div class="gallery-overlay">
+                            <h4>Luxury Room</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 gallery-item" data-category="rooms">
+                    <div class="gallery-card">
+                        <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=600&h=500&fit=crop" alt="Double Room">
+                        <div class="gallery-overlay">
+                            <h4>Double Room</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 gallery-item" data-category="rooms">
+                    <div class="gallery-card">
+                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=500&fit=crop" alt="Suite">
+                        <div class="gallery-overlay">
+                            <h4>Luxury Suite</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dining -->
+                <div class="col-md-4 gallery-item" data-category="dining">
+                    <div class="gallery-card">
+                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=500&fit=crop" alt="Restaurant">
+                        <div class="gallery-overlay">
+                            <h4>Fine Dining</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 gallery-item" data-category="dining">
+                    <div class="gallery-card">
+                        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=500&fit=crop" alt="Cuisine">
+                        <div class="gallery-overlay">
+                            <h4>Exquisite Cuisine</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 gallery-item" data-category="dining">
+                    <div class="gallery-card">
+                        <img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?w=600&h=500&fit=crop" alt="Bar">
+                        <div class="gallery-overlay">
+                            <h4>Bar & Lounge</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spa & Wellness -->
+                <div class="col-md-4 gallery-item" data-category="spa">
+                    <div class="gallery-card">
+                        <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&h=500&fit=crop" alt="Spa">
+                        <div class="gallery-overlay">
+                            <h4>Spa Facilities</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 gallery-item" data-category="spa">
+                    <div class="gallery-card">
+                        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=500&fit=crop" alt="Gym">
+                        <div class="gallery-overlay">
+                            <h4>Fitness Center</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 gallery-item" data-category="spa">
+                    <div class="gallery-card">
+                        <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&h=500&fit=crop" alt="Pool">
+                        <div class="gallery-overlay">
+                            <h4>Swimming Pool</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Events -->
+                <div class="col-md-4 gallery-item" data-category="events">
+                    <div class="gallery-card">
+                        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=500&fit=crop" alt="Meeting Room">
+                        <div class="gallery-overlay">
+                            <h4>Meeting Spaces</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 gallery-item" data-category="events">
+                    <div class="gallery-card">
+                        <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=600&h=500&fit=crop" alt="Event Hall">
+                        <div class="gallery-overlay">
+                            <h4>Event Hall</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 gallery-item" data-category="events">
+                    <div class="gallery-card">
+                        <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&h=500&fit=crop" alt="Wedding">
+                        <div class="gallery-overlay">
+                            <h4>Wedding Venue</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-section">
+        <div class="container">
+            <div class="newsletter-section py-5">
+                <h3 class="text-center mb-4">Sign up for our newsletter to receive our news, deals and special offers.</h3>
+                <form class="newsletter-form">
+                    <div class="row g-3 justify-content-center">
+                        <div class="col-md-6">
+                            <input type="email" class="form-control" placeholder="Your Email Address">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-subscribe w-100">Subscribe</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="footer-bottom py-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="mb-0">© Copyright 2025 Hillscastleinnn. All rights reserved.</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <span class="me-3">Follow us:</span>
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+    <script>
+        // Gallery Filter
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                document.querySelectorAll('.gallery-item').forEach(item => {
+                    if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

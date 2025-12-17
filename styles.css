@@ -105,7 +105,7 @@ p, span, a, li, label, input, select, textarea {
 /* Hero Section */
 .hero-section {
     height: 100vh;
-    background-image: url('https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1920&h=1080&fit=crop');
+    background-image: url('media/poster 1.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -1514,7 +1514,7 @@ img[loading="lazy"].loaded {
         width: 100%;
         height: 50vh;
         min-height: 300px;
-        background-image: url('https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1920&h=1080&fit=crop');
+        background-image: url('media/poster 1.jpg');
         background-size: cover;
         background-position: center;
         position: relative;
@@ -1756,6 +1756,205 @@ img[loading="lazy"].loaded {
     .apartment-types-section .container {
         padding-left: 15px;
         padding-right: 15px;
+    }
+}
+
+/* New Styles for Events & Functions Content */
+.section-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.section-list li {
+    padding: 0.5rem 0;
+    color: var(--text-gray);
+    font-size: 0.95rem;
+}
+
+.party-type-box {
+    background: rgba(212, 175, 55, 0.05);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.party-type-box:hover {
+    background: rgba(212, 175, 55, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+}
+
+.party-type-box h4 {
+    color: var(--accent-gold);
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.party-type-box p {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.event-type-card {
+    background: rgba(212, 175, 55, 0.05);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    height: 100%;
+}
+
+.event-type-card:hover {
+    background: rgba(212, 175, 55, 0.1);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+}
+
+.event-type-card h3 {
+    color: var(--accent-gold);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.event-type-card p {
+    color: var(--text-gray);
+    font-size: 0.95rem;
+}
+
+.gallery-stat-box {
+    padding: 1.5rem;
+    background: rgba(212, 175, 55, 0.05);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.gallery-stat-box:hover {
+    background: rgba(212, 175, 55, 0.1);
+    transform: translateY(-3px);
+}
+
+.gallery-stat-box h3 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.gallery-stat-box p {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.events-inquiry-box {
+    border-radius: 8px;
+}
+
+.events-inquiry-box h4 {
+    color: var(--accent-gold);
+    font-size: 1.2rem;
+}
+
+.events-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.events-list li {
+    padding: 0.5rem 0;
+    color: var(--text-gray);
+    font-size: 0.95rem;
+}
+
+.service-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.service-list li {
+    padding: 0.5rem 0;
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.service-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--accent-gold);
+    font-weight: bold;
+}
+
+.event-section-header {
+    margin-bottom: 3rem;
+}
+
+.event-section-header .section-title {
+    margin-bottom: 1rem;
+}
+
+.wedding-section,
+.parties-section {
+    background: rgba(26, 26, 26, 0.5);
+    padding: 4rem 0;
+}
+
+.service-feature-box {
+    background: rgba(212, 175, 55, 0.05);
+    padding: 2rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    height: 100%;
+}
+
+.service-feature-box:hover {
+    background: rgba(212, 175, 55, 0.1);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+}
+
+.service-feature-box h3 {
+    color: var(--accent-gold);
+    margin-bottom: 1rem;
+}
+
+.service-feature-box p {
+    color: var(--text-gray);
+    font-size: 0.95rem;
+}
+
+.gallery-intro {
+    padding: 2rem;
+    background: rgba(212, 175, 55, 0.05);
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+/* Responsive adjustments for new elements */
+@media (max-width: 768px) {
+    .party-type-box,
+    .event-type-card,
+    .gallery-stat-box {
+        margin-bottom: 1.5rem;
+    }
+    
+    .wedding-section,
+    .parties-section {
+        padding: 2rem 0;
+    }
+    
+    .service-feature-box {
+        margin-bottom: 1.5rem;
+    }
+    
+    .gallery-intro {
+        padding: 1.5rem;
     }
 }
 

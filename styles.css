@@ -307,11 +307,20 @@ p, span, a, li, label, input, select, textarea {
 .luxury-section {
     background-color: var(--primary-dark);
     padding: 5rem 0;
+    position: relative;
+    z-index: 0;
+    overflow: visible;
+}
+
+.luxury-section .container {
+    position: relative;
+    z-index: 1;
 }
 
 .image-stack {
     position: relative;
     height: 600px;
+    z-index: 1;
 }
 
 .stack-image {
@@ -354,6 +363,8 @@ p, span, a, li, label, input, select, textarea {
 
 .section-content {
     padding: 2rem 0;
+    position: relative;
+    z-index: 2;
 }
 
 .section-label {
@@ -398,9 +409,14 @@ p, span, a, li, label, input, select, textarea {
 
 .full-width-image {
     margin-top: 4rem;
+    margin-bottom: 0;
     height: 500px;
     overflow: hidden;
     border-radius: 10px;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 100%;
 }
 
 .full-width-image img {
@@ -419,7 +435,8 @@ p, span, a, li, label, input, select, textarea {
     background-color: var(--primary-dark);
     padding: 5rem 0;
     position: relative;
-    z-index: 1;
+    z-index: 0;
+    margin-top: 0;
 }
 
 .apartment-types-section .container {
@@ -1659,11 +1676,34 @@ img[loading="lazy"].loaded {
     }
     
     .service-card .row {
+        display: flex !important;
         flex-direction: column;
+    }
+    
+    .service-card .row > div {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+    
+    .service-card .row .col-5 {
+        order: 2;
+        width: 100% !important;
+    }
+    
+    .service-card .row .col-7 {
+        order: 1;
+        width: 100% !important;
     }
     
     .service-image {
         min-height: 250px;
+        width: 100% !important;
+    }
+    
+    .service-image img {
+        width: 100% !important;
+        max-width: 100% !important;
     }
     
     .city-card {

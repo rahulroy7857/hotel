@@ -58,27 +58,28 @@
                 <div class="col-lg-7">
                     <div class="contact-form-card">
                         <h2 class="section-title mb-4">Send us a Message</h2>
-                        <form class="contact-form">
+                        <form class="contact-form" id="contactForm">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label">First Name</label>
-                                    <input type="text" class="form-control" required>
+                                    <input type="text" class="form-control" name="firstName" id="firstName" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Last Name</label>
-                                    <input type="text" class="form-control" required>
+                                    <input type="text" class="form-control" name="lastName" id="lastName" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" required>
+                                    <input type="email" class="form-control" name="email" id="email" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Phone</label>
-                                    <input type="tel" class="form-control" required>
+                                    <input type="tel" class="form-control" name="phone" id="phone" maxlength="10" pattern="[0-9]{10}" placeholder="10 digit mobile number" required>
+                                    <small class="form-text text-muted">Enter 10 digit mobile number only</small>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Subject</label>
-                                    <select class="form-control" required>
+                                    <select class="form-control" name="subject" id="subject" required>
                                         <option class="text-black" value="">Select a subject</option>
                                         <option class="text-black" value="booking">Room Booking</option>
                                         <option class="text-black" value="wedding">Wedding & Marriage Functions</option>
@@ -90,10 +91,16 @@
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Message</label>
-                                    <textarea class="form-control" rows="6" required></textarea>
+                                    <textarea class="form-control" name="message" id="message" rows="6" required></textarea>
                                 </div>
                                 <div class="col-12">
-                                    <button type="submit" class="btn btn-book">SEND MESSAGE</button>
+                                    <div id="formMessage" class="alert d-none mb-3"></div>
+                                    <button type="submit" class="btn btn-book" id="submitBtn">
+                                        <span class="btn-text">SEND MESSAGE</span>
+                                        <span class="btn-spinner d-none">
+                                            <i class="fas fa-spinner fa-spin"></i> Sending...
+                                        </span>
+                                    </button>
                                 </div>
                             </div>
                         </form>
@@ -222,6 +229,10 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <!-- EmailJS Config -->
+    <script src="emailjs-config.js"></script>
     <!-- Custom JS -->
     <script src="script.js"></script>
 </body>

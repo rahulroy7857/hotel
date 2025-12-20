@@ -200,6 +200,147 @@ if (newsletterForm) {
     });
 }
 
+// Phone input restriction - only digits, max 10 digits
+const phoneInput = document.getElementById('phone');
+if (phoneInput) {
+    // Only allow digits on input
+    phoneInput.addEventListener('input', function(e) {
+        // Remove any non-digit characters
+        this.value = this.value.replace(/\D/g, '');
+        
+        // Limit to 10 digits
+        if (this.value.length > 10) {
+            this.value = this.value.slice(0, 10);
+        }
+    });
+    
+    // Prevent non-digit characters on keypress
+    phoneInput.addEventListener('keypress', function(e) {
+        // Allow: backspace, delete, tab, escape, enter
+        if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
+            // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+            (e.keyCode === 65 && e.ctrlKey === true) ||
+            (e.keyCode === 67 && e.ctrlKey === true) ||
+            (e.keyCode === 86 && e.ctrlKey === true) ||
+            (e.keyCode === 88 && e.ctrlKey === true)) {
+            return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
+    
+    // Prevent paste of non-digit characters
+    phoneInput.addEventListener('paste', function(e) {
+        e.preventDefault();
+        const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+        const digitsOnly = pastedText.replace(/\D/g, '').slice(0, 10);
+        this.value = digitsOnly;
+    });
+}
+
+// Contact form submission with EmailJS
+const contactForm = document.getElementById('contactForm');
+if (contactForm && typeof EMAILJS_CONFIG !== 'undefined') {
+    // Initialize EmailJS with public key
+    emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+
+    contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnSpinner = submitBtn.querySelector('.btn-spinner');
+        const formMessage = document.getElementById('formMessage');
+        
+        // Get form values
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const subject = document.getElementById('subject').value;
+        const message = document.getElementById('message').value.trim();
+        
+        // Validate phone number (must be exactly 10 digits)
+        if (phone.length !== 10 || !/^\d{10}$/.test(phone)) {
+            formMessage.classList.remove('d-none');
+            formMessage.classList.remove('alert-success');
+            formMessage.classList.add('alert-danger');
+            formMessage.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Please enter a valid 10-digit mobile number.';
+            formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            return;
+        }
+
+        // Show loading state
+        submitBtn.disabled = true;
+        btnText.classList.add('d-none');
+        btnSpinner.classList.remove('d-none');
+        formMessage.classList.add('d-none');
+
+        // Prepare email template parameters
+        const templateParams = {
+            to_email: EMAILJS_CONFIG.ADMIN_EMAIL,
+            to_name: 'Admin',
+            from_name: `${firstName} ${lastName}`,
+            from_email: email,
+            phone: phone,
+            subject: subject,
+            message: message,
+            reply_to: email,
+            user_email: email,
+            user_name: `${firstName} ${lastName}`,
+            user_phone: phone
+        };
+
+        try {
+            // Check if EmailJS is configured
+            if (!EMAILJS_CONFIG.PUBLIC_KEY || EMAILJS_CONFIG.PUBLIC_KEY === 'YOUR_PUBLIC_KEY' ||
+                !EMAILJS_CONFIG.SERVICE_ID || EMAILJS_CONFIG.SERVICE_ID === 'YOUR_SERVICE_ID' ||
+                !EMAILJS_CONFIG.TEMPLATE_ID || EMAILJS_CONFIG.TEMPLATE_ID === 'YOUR_TEMPLATE_ID') {
+                throw new Error('EmailJS is not configured. Please set up your credentials in emailjs-config.js');
+            }
+
+            // Send email using EmailJS
+            const response = await emailjs.send(
+                EMAILJS_CONFIG.SERVICE_ID,
+                EMAILJS_CONFIG.TEMPLATE_ID,
+                templateParams
+            );
+
+            // Success
+            formMessage.classList.remove('d-none');
+            formMessage.classList.remove('alert-danger');
+            formMessage.classList.add('alert-success');
+            formMessage.innerHTML = '<i class="fas fa-check-circle me-2"></i>Thank you! Your message has been sent successfully. We will get back to you soon.';
+            contactForm.reset();
+            
+            // Scroll to message
+            formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+        } catch (error) {
+            console.error('EmailJS Error:', error);
+            formMessage.classList.remove('d-none');
+            formMessage.classList.remove('alert-success');
+            formMessage.classList.add('alert-danger');
+            
+            if (error.text && error.text.includes('not configured')) {
+                formMessage.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Email service is not configured. Please contact the website administrator.';
+            } else {
+                formMessage.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Sorry, there was an error sending your message. Please try again later or contact us directly.';
+            }
+            
+            // Scroll to message
+            formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } finally {
+            // Reset button state
+            submitBtn.disabled = false;
+            btnText.classList.remove('d-none');
+            btnSpinner.classList.add('d-none');
+        }
+    });
+}
+
 // Enhanced lazy loading for images with loading="lazy"
 document.addEventListener('DOMContentLoaded', () => {
     const lazyImages = document.querySelectorAll('img[loading="lazy"]');

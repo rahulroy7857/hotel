@@ -1,3 +1,54 @@
+// EmailJS Configuration
+// To set up EmailJS:
+// 1. Go to https://www.emailjs.com/ and sign up for a free account
+// 2. Create an Email Service (Gmail, Outlook, etc.)
+// 3. Create an Email Template
+// 4. Get your Public Key from Account > General
+// 5. Replace the values below with your credentials
+
+const EMAILJS_CONFIG = {
+    PUBLIC_KEY: 'MdwkpD0G3e2-i47CO',        // Your EmailJS Public Key
+    SERVICE_ID: 'service_hh832ug',        // Your EmailJS Service ID
+    TEMPLATE_ID: 'template_boxmm7f',      // Your EmailJS Template ID
+    ADMIN_EMAIL: 'rahulkumar53500@gmail.com'  // Admin email (already set)
+};
+
+// Load header and footer components
+document.addEventListener('DOMContentLoaded', function() {
+    // Load header
+    fetch('header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('header-placeholder').innerHTML = data;
+            // Set active nav link based on current page
+            setActiveNavLink();
+        })
+        .catch(error => console.error('Error loading header:', error));
+
+    // Load footer
+    fetch('footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer-placeholder').innerHTML = data;
+        })
+        .catch(error => console.error('Error loading footer:', error));
+});
+
+// Function to set active navigation link
+function setActiveNavLink() {
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    navLinks.forEach(link => {
+        const linkHref = link.getAttribute('href');
+        if (linkHref === currentPage || (currentPage === '' && linkHref === 'index.html')) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+}
+
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -160,13 +211,142 @@ if (checkInInput) {
 }
 
 // Search button functionality
+function handleSearch() {
+    // Get form inputs - use more specific selectors
+    const bookingWidget = document.querySelector('.booking-widget');
+    if (!bookingWidget) {
+        console.error('Booking widget not found');
+        return false;
+    }
+    
+    const dateInputs = bookingWidget.querySelectorAll('input[type="date"]');
+    const checkInInput = dateInputs[0];
+    const checkOutInput = dateInputs[1];
+    const guestSelect = document.getElementById('guest-select');
+    const roomTypeSelect = document.getElementById('room-type-select');
+    
+    // Get values
+    const checkIn = checkInInput ? checkInInput.value : '';
+    const checkOut = checkOutInput ? checkOutInput.value : '';
+    const guests = guestSelect ? guestSelect.value : '1';
+    const roomType = roomTypeSelect ? roomTypeSelect.value : 'all-types';
+    
+    // Validation
+    if (!checkIn) {
+        showSearchError('Please select a check-in date.');
+        checkInInput?.focus();
+        return false;
+    }
+    
+    if (!checkOut) {
+        showSearchError('Please select a check-out date.');
+        checkOutInput?.focus();
+        return false;
+    }
+    
+    // Date validation
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (checkInDate < today) {
+        showSearchError('Check-in date cannot be in the past.');
+        checkInInput?.focus();
+        return false;
+    }
+    
+    if (checkOutDate <= checkInDate) {
+        showSearchError('Check-out date must be after check-in date.');
+        checkOutInput?.focus();
+        return false;
+    }
+    
+    // Store search parameters in sessionStorage
+    const searchParams = {
+        checkIn: checkIn,
+        checkOut: checkOut,
+        guests: guests,
+        roomType: roomType
+    };
+    
+    sessionStorage.setItem('bookingSearch', JSON.stringify(searchParams));
+    
+    // Redirect to rooms page with search parameters
+    const params = new URLSearchParams({
+        checkIn: checkIn,
+        checkOut: checkOut,
+        guests: guests,
+        roomType: roomType
+    });
+    
+    window.location.href = `rooms.html?${params.toString()}`;
+    
+    return true;
+}
+
+// Function to show search error messages
+function showSearchError(message) {
+    // Remove existing error message if any
+    const existingError = document.querySelector('.search-error-message');
+    if (existingError) {
+        existingError.remove();
+    }
+    
+    // Create error message element
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'search-error-message alert alert-danger mt-3';
+    errorDiv.style.cssText = 'margin-top: 10px; padding: 10px 15px; border-radius: 5px;';
+    errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>${message}`;
+    
+    // Insert after booking widget
+    const bookingWidget = document.querySelector('.booking-widget');
+    if (bookingWidget) {
+        bookingWidget.appendChild(errorDiv);
+        
+        // Scroll to error message
+        errorDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+        // Remove error message after 5 seconds
+        setTimeout(() => {
+            if (errorDiv.parentNode) {
+                errorDiv.style.transition = 'opacity 0.3s ease';
+                errorDiv.style.opacity = '0';
+                setTimeout(() => errorDiv.remove(), 300);
+            }
+        }, 5000);
+    } else {
+        // Fallback to alert if widget not found
+        alert(message);
+    }
+}
+
+// Attach search functionality to search button
 const searchButton = document.querySelector('.btn-search');
 if (searchButton) {
     searchButton.addEventListener('click', (e) => {
         e.preventDefault();
-        alert('Search functionality would be implemented here. Thank you for your interest!');
+        handleSearch();
     });
 }
+
+// Allow Enter key to trigger search in date inputs
+document.addEventListener('DOMContentLoaded', () => {
+    const bookingWidget = document.querySelector('.booking-widget');
+    if (bookingWidget) {
+        const dateInputs = bookingWidget.querySelectorAll('input[type="date"]');
+        const selects = bookingWidget.querySelectorAll('select');
+        
+        [...dateInputs, ...selects].forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSearch();
+                }
+            });
+        });
+    }
+});
 
 // Book Now button functionality
 const bookNowButton = document.querySelector('.btn-book');

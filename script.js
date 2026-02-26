@@ -142,15 +142,15 @@ let currentTestimonial = 0;
 const testimonials = [
     {
         text: "The restaurant was absolutely amazing! The food was delicious, and the service was impeccable. We had a wonderful time and would highly recommend it.",
-        author: "John Doe, New York"
+        author: "John Doe, Bihar"
     },
     {
         text: "Our stay at CozyStay was exceptional. The apartments are beautifully furnished and the location is perfect. The staff went above and beyond to make our visit memorable.",
-        author: "Sarah Johnson, Los Angeles"
+        author: "Sarah Ray, Patna"
     },
     {
         text: "I've stayed in many hotels, but CozyStay offers something truly special. The combination of luxury and comfort is unmatched. I'll definitely be back!",
-        author: "Michael Chen, San Francisco"
+        author: "Michael Chen, Bihar"
     }
 ];
 

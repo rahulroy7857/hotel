@@ -6,6 +6,7 @@
     <title>Hills Castle Inn Hotel | Safe Three Star Hotel in Bihar (Patna • Rajgir)</title>
     <meta name="description" content="Safe hotel rooms, banquet hall, shaadi ghar, business events, and guided tours for tourism in Rajgir & Bihar — book Hills Castle Inn.">
     <meta name="keywords" content="Hotel Patna, Hotels in Patna, Hotels in Bihar, Near Hotel, hotel room, Cheap hotel in Bihar, Three Star hotel Best place to stay, Banquet Hall near me, Marriage Hall">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -51,52 +52,33 @@
                         <div class="col-md-2">
                             <label>ROOM TYPE</label>
                             <select class="form-control" id="room-type-select">
-                                <option value="all-types" class="text-black">Select Room Type</option>                                
+                                <option value="all-types" class="text-black">Select Room Type</option> 
+
+                                   <option value="banquet-hall" class="text-black" style="font-weight: bold;">Banquet hall</option>                               
+                               
+                                
                                 <optgroup class="text-black" label="Based on Occupancy">
                                     <option value="single-room" class="text-black">Single Room</option>
                                     <option value="double-room" class="text-black">Double Room</option>
-                                    <option value="triple-room" class="text-black">Triple Room</option>
-                                    <option value="quad-room" class="text-black">Quad Room</option>
+                                    <option value="luxury-suite" class="text-black">Luxury Suite</option>
+                                    
                                 </optgroup>                                
                                 <optgroup class="text-black" label="Based on Bed Size & Number">
-                                    <option value="queen-room" class="text-black">Queen Room</option>
-                                    <option value="king-room" class="text-black">King Room</option>
-                                    <option value="twin-room" class="text-black">Twin Room</option>
+                                    <option value="queen-room" class="text-black">Queen Size Bed</option>
+                                    <option value="king-room" class="text-black">King Room Size Bed</option>
                                     <option value="double-bed-room" class="text-black">Double Bed Room</option>
-                                    <option value="studio-room" class="text-black">Studio Room</option>
-                                    <option value="bunk-room" class="text-black">Bunk Room / Bed</option>
-                                    <option value="pod-style-room" class="text-black">Pod Style Room</option>
+                                    
                                 </optgroup>                                
-                                <optgroup class="text-black" label="Based on Design & Layout">
-                                    <option value="standard-room" class="text-black">Standard Room</option>
-                                    <option value="deluxe-room" class="text-black">Deluxe & Superior Room</option>
-                                    <option value="executive-room" class="text-black">Executive Room</option>
-                                    <option value="double-room-design" class="text-black">Double Room</option>
-                                    <option value="junior-suite" class="text-black">Junior Suite / Mini-suite</option>
-                                    <option value="master-suite" class="text-black">Master Suite</option>
-                                    <option value="executive-suite" class="text-black">Executive Suite</option>
-                                    <option value="presidential-room" class="text-black">Presidential Room</option>
-                                    <option value="penthouse-suite" class="text-black">Penthouse Suite</option>
-                                    <option value="villa-suite" class="text-black">Villa Suite</option>
-                                    <option value="aparthotel-room" class="text-black">Aparthotel Room</option>
-                                </optgroup>                                
+                                                             
                                 <optgroup class="text-black" label="Based on Amenities/View">
                                     <option value="room-with-pool" class="text-black">Room with Pool</option>
                                     <option value="room-with-jacuzzi" class="text-black">Room with Jacuzzi</option>
                                     <option value="room-with-balcony" class="text-black">Room with Balcony or Terrace</option>
                                     <option value="room-with-club-access" class="text-black">Room with Club Access</option>
                                     <option value="mountain-view-room" class="text-black">Mountain View Room</option>
-                                    <option value="ocean-view-room" class="text-black">Ocean View Room</option>
+                                    
                                 </optgroup>                                
-                                <optgroup class="text-black" label="Other Room Types or Features">
-                                    <option value="connecting-rooms" class="text-black">Connecting Rooms</option>
-                                    <option value="adjoining-rooms" class="text-black">Adjoining Rooms</option>
-                                    <option value="adjacent-rooms" class="text-black">Adjacent Rooms</option>
-                                    <option value="accessible-room" class="text-black">Accessible Room</option>
-                                    <option value="ground-floor-room" class="text-black">Ground Floor Room</option>
-                                    <option value="near-elevator-room" class="text-black">Room Near Elevator</option>
-                                    <option value="pet-friendly-room" class="text-black">Pet Friendly Room</option>
-                                </optgroup>
+                               
                             </select>
                         </div>
                         <div class="col-md-2">
@@ -640,8 +622,64 @@
     <!-- Footer Placeholder -->
     <div id="footer-placeholder"></div>
 
+    <!-- Search Request Modal: gradient background -->
+    <style>
+        #searchRequestModal .modal-content {
+            background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 35%, #dee2e6 70%, #d3d8dc 100%);
+            color: #1a1a1a;
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+        }
+        #searchRequestModal .modal-header {
+            background: linear-gradient(180deg, #ffffff 0%, #f1f3f5 100%);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        #searchRequestModal .modal-title { color: #1a1a1a; font-weight: 600; }
+        #searchRequestModal .modal-body {
+            background: linear-gradient(180deg, #fafbfc 0%, #f1f3f5 100%);
+        }
+        #searchRequestModal .modal-footer {
+            background: linear-gradient(180deg, #e9ecef 0%, #dee2e6 100%);
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+        #searchRequestModal .form-label { color: #333; }
+        .modal-backdrop.show { background-color: #000 !important; opacity: 0.55 !important; }
+    </style>
+    <div class="modal fade" id="searchRequestModal" tabindex="-1" aria-labelledby="searchRequestModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="searchRequestModalLabel">We welcome your request at Hills Castle Inn</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="searchRequestForm">
+                        <div class="mb-3">
+                            <label for="searchReqName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="searchReqName" placeholder="Your name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="searchReqEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="searchReqEmail" placeholder="your@email.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="searchReqPhone" class="form-label">Phone</label>
+                            <input type="tel" class="form-control" id="searchReqPhone" placeholder="10-digit mobile" maxlength="10" pattern="[0-9]{10}">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="searchModalCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-search-submit" id="searchModalOkBtn">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- EmailJS for search request emails -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <!-- Custom JS -->
     <script src="script.js"></script>
 </body>

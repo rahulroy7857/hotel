@@ -8,10 +8,28 @@
 
 const EMAILJS_CONFIG = {
     PUBLIC_KEY: 'MdwkpD0G3e2-i47CO',        // Your EmailJS Public Key
-    SERVICE_ID: 'service_hh832ug',        // Your EmailJS Service ID
-    TEMPLATE_ID: 'template_boxmm7f',      // Your EmailJS Template ID
-    ADMIN_EMAIL: 'rahulkumar53500@gmail.com'  // Admin email (already set)
+    SERVICE_ID: 'service_hh832ug',          // Your EmailJS Service ID
+    TEMPLATE_ID: 'template_boxmm7f',        // Your EmailJS Template ID
+    ADMIN_EMAIL: 'rahulkumar53500@gmail.com' // All emails send to this address; template "To Email" must be {{to_email}}
 };
+// Recipient for all form emails – ensure template uses {{to_email}} in EmailJS dashboard
+const RECIPIENT_EMAIL = 'rahulkumar53500@gmail.com';
+
+// Ensure EmailJS is available (same as test-email.html). Load script if missing so index/contact work like test page.
+function ensureEmailJSLoaded() {
+    return new Promise(function (resolve) {
+        if (typeof window.emailjs !== 'undefined') {
+            resolve();
+            return;
+        }
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+        s.async = false;
+        s.onload = function () { resolve(); };
+        s.onerror = function () { resolve(); };
+        document.head.appendChild(s);
+    });
+}
 
 // Load header and footer components
 document.addEventListener('DOMContentLoaded', function() {
@@ -67,19 +85,17 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Navbar scroll effect
+// Navbar scroll effect (navbar may be null until header is loaded)
 let lastScroll = 0;
-const navbar = document.querySelector('.navbar');
-
 window.addEventListener('scroll', () => {
+    const navbar = document.querySelector('.navbar');
+    if (!navbar) return;
     const currentScroll = window.pageYOffset;
-    
     if (currentScroll > 100) {
         navbar.classList.add('scrolled');
     } else {
         navbar.classList.remove('scrolled');
     }
-    
     lastScroll = currentScroll;
 });
 
@@ -321,13 +337,185 @@ function showSearchError(message) {
     }
 }
 
+// Validate booking widget (check-in, check-out, guests, room type) before opening modal. Returns true if valid.
+function validateBookingWidgetBeforeModal() {
+    const bookingWidget = document.querySelector('.booking-widget');
+    if (!bookingWidget) return false;
+    const dateInputs = bookingWidget.querySelectorAll('input[type="date"]');
+    const checkInInput = dateInputs[0];
+    const checkOutInput = dateInputs[1];
+    const guestSelect = document.getElementById('guest-select');
+    const roomTypeSelect = document.getElementById('room-type-select');
+    const checkIn = checkInInput?.value?.trim() || '';
+    const checkOut = checkOutInput?.value?.trim() || '';
+    const guests = guestSelect?.value?.trim() || '';
+    const roomType = roomTypeSelect?.value?.trim() || '';
+
+    if (!checkIn) {
+        showSearchError('Please select check-in date.');
+        checkInInput?.focus();
+        return false;
+    }
+    if (!checkOut) {
+        showSearchError('Please select check-out date.');
+        checkOutInput?.focus();
+        return false;
+    }
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (checkInDate < today) {
+        showSearchError('Check-in date cannot be in the past.');
+        checkInInput?.focus();
+        return false;
+    }
+    if (checkOutDate <= checkInDate) {
+        showSearchError('Check-out date must be after check-in date.');
+        checkOutInput?.focus();
+        return false;
+    }
+    if (!guests) {
+        showSearchError('Please select number of guests.');
+        guestSelect?.focus();
+        return false;
+    }
+    if (!roomType || roomType === 'all-types') {
+        showSearchError('Please select a room type.');
+        roomTypeSelect?.focus();
+        return false;
+    }
+    return true;
+}
+
+// Format YYYY-MM-DD to "February 28, 2026" for email (no decimals, plain string)
+function formatDateForEmail(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T12:00:00');
+    if (isNaN(d.getTime())) return dateStr;
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+
+// Get check-in, check-out, guest, room_type from booking widget
+function getBookingWidgetData() {
+    const bookingWidget = document.querySelector('.booking-widget');
+    if (!bookingWidget) return { from_date: '', to_date: '', guest: '', room_type: '' };
+    const dateInputs = bookingWidget.querySelectorAll('input[type="date"]');
+    const guestSelect = document.getElementById('guest-select');
+    const roomTypeSelect = document.getElementById('room-type-select');
+    const checkIn = dateInputs[0]?.value || '';
+    const checkOut = dateInputs[1]?.value || '';
+    return {
+        from_date: formatDateForEmail(checkIn),
+        to_date: formatDateForEmail(checkOut),
+        guest: (guestSelect && guestSelect.value) ? guestSelect.value : '',
+        room_type: (roomTypeSelect && roomTypeSelect.value) ? roomTypeSelect.value : ''
+    };
+}
+
+function getSearchRequestFormData() {
+    return {
+        name: document.getElementById('searchReqName')?.value?.trim() || '',
+        email: document.getElementById('searchReqEmail')?.value?.trim() || '',
+        phone: document.getElementById('searchReqPhone')?.value?.trim() || ''
+    };
+}
+
+function hasFilledAnySearchDetail(d) {
+    return !!(d.name || d.email || d.phone);
+}
+
+// Send search request email using same template as test-email.html. Returns a Promise that resolves when sent (or when skipped).
+function sendSearchRequestEmail(name, email, phone, from_date, to_date, guest, room_type, cancelled) {
+    if (!hasFilledAnySearchDetail({ name, email, phone })) return Promise.resolve();
+    if (typeof EMAILJS_CONFIG === 'undefined') return Promise.resolve();
+    var subject = cancelled ? 'Search Request (Cancelled) - Hills Castle Inn' : 'Search Request - Hills Castle Inn';
+    var message = cancelled
+        ? 'User closed the form. We welcome your request at Hills Castle Inn.'
+        : 'We welcome your request at Hills Castle Inn.';
+    var templateParams = {
+        to_email: RECIPIENT_EMAIL,
+        to_name: 'Admin',
+        from_name: name || 'Website Guest',
+        from_email: email || 'noreply@castelhills.com',
+        phone: phone || '-',
+        subject: subject,
+        message: message,
+        guest: guest || '',
+        from_date: from_date || '',
+        to_date: to_date || '',
+        room_type: room_type || '',
+        reply_to: email || '',
+        user_email: email || '',
+        user_name: name || '',
+        user_phone: phone || ''
+    };
+    return ensureEmailJSLoaded().then(function () {
+        if (typeof window.emailjs === 'undefined') {
+            console.error('Search request email error: EmailJS did not load.');
+            return;
+        }
+        window.emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+        return window.emailjs.send(EMAILJS_CONFIG.SERVICE_ID, EMAILJS_CONFIG.TEMPLATE_ID, templateParams);
+    }).catch(function (err) {
+        console.error('Search request email error:', err);
+    });
+}
+
 // Attach search functionality to search button
 const searchButton = document.querySelector('.btn-search');
 if (searchButton) {
-    searchButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        handleSearch();
-    });
+    const searchModalEl = document.getElementById('searchRequestModal');
+    if (searchModalEl) {
+        const searchModal = new bootstrap.Modal(searchModalEl);
+        let searchModalClosedByOk = false;
+        let searchModalClosedByCancelBtn = false;
+
+        searchButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!validateBookingWidgetBeforeModal()) return;
+            searchModalClosedByOk = false;
+            searchModalClosedByCancelBtn = false;
+            searchModal.show();
+        });
+
+        document.getElementById('searchModalOkBtn')?.addEventListener('click', () => {
+            const d = getSearchRequestFormData();
+            const w = getBookingWidgetData();
+            const emailPromise = hasFilledAnySearchDetail(d)
+                ? sendSearchRequestEmail(d.name, d.email, d.phone, w.from_date, w.to_date, w.guest, w.room_type, false)
+                : Promise.resolve();
+            emailPromise.finally(() => {
+                searchModalClosedByOk = true;
+                searchModal.hide();
+                handleSearch();
+            });
+        });
+
+        document.getElementById('searchModalCancelBtn')?.addEventListener('click', () => {
+            const d = getSearchRequestFormData();
+            const w = getBookingWidgetData();
+            if (hasFilledAnySearchDetail(d)) sendSearchRequestEmail(d.name, d.email, d.phone, w.from_date, w.to_date, w.guest, w.room_type, true);
+            searchModalClosedByCancelBtn = true;
+            searchModal.hide();
+        });
+
+        searchModalEl.addEventListener('hidden.bs.modal', () => {
+            if (!searchModalClosedByOk && !searchModalClosedByCancelBtn) {
+                const d = getSearchRequestFormData();
+                const w = getBookingWidgetData();
+                if (hasFilledAnySearchDetail(d)) sendSearchRequestEmail(d.name, d.email, d.phone, w.from_date, w.to_date, w.guest, w.room_type, true);
+            }
+            searchModalClosedByOk = false;
+            searchModalClosedByCancelBtn = false;
+        });
+    } else {
+        searchButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleSearch();
+        });
+    }
 }
 
 // Allow Enter key to trigger search in date inputs
@@ -341,24 +529,25 @@ document.addEventListener('DOMContentLoaded', () => {
             input.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    handleSearch();
+                    if (document.getElementById('searchRequestModal')) searchButton?.click();
+                    else handleSearch();
                 }
             });
         });
     }
 });
 
-// Book Now button functionality
-const bookNowButton = document.querySelector('.btn-book');
-if (bookNowButton) {
-    bookNowButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        const heroSection = document.querySelector('#home');
-        if (heroSection) {
+// Book Now button functionality – skip contact form submit so "SEND MESSAGE" works
+document.querySelectorAll('.btn-book').forEach(function (btn) {
+    if (btn.closest('#contactForm')) return;
+    btn.addEventListener('click', function (e) {
+        var heroSection = document.querySelector('#home');
+        if (heroSection && (this.tagName === 'BUTTON' || this.getAttribute('href') === '#')) {
+            e.preventDefault();
             heroSection.scrollIntoView({ behavior: 'smooth' });
         }
     });
-}
+});
 
 // Newsletter form submission
 const newsletterForm = document.querySelector('.newsletter-form');
@@ -420,106 +609,118 @@ if (phoneInput) {
     });
 }
 
-// Contact form submission with EmailJS
-const contactForm = document.getElementById('contactForm');
-if (contactForm && typeof EMAILJS_CONFIG !== 'undefined') {
-    // Initialize EmailJS with public key
-    emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+// Contact form submission with EmailJS – ensure emails go to RECIPIENT_EMAIL
+function initContactFormWithEmail() {
+    const contactForm = document.getElementById('contactForm');
+    if (!contactForm || typeof EMAILJS_CONFIG === 'undefined') return;
 
-    contactForm.addEventListener('submit', async (e) => {
+    contactForm.addEventListener('submit', function (e) {
         e.preventDefault();
-        
         const submitBtn = document.getElementById('submitBtn');
-        const btnText = submitBtn.querySelector('.btn-text');
-        const btnSpinner = submitBtn.querySelector('.btn-spinner');
+        const btnText = submitBtn ? submitBtn.querySelector('.btn-text') : null;
+        const btnSpinner = submitBtn ? submitBtn.querySelector('.btn-spinner') : null;
         const formMessage = document.getElementById('formMessage');
-        
-        // Get form values
-        const firstName = document.getElementById('firstName').value.trim();
-        const lastName = document.getElementById('lastName').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const subject = document.getElementById('subject').value;
-        const message = document.getElementById('message').value.trim();
-        
-        // Validate phone number (must be exactly 10 digits)
+        const firstName = (document.getElementById('firstName') && document.getElementById('firstName').value) ? document.getElementById('firstName').value.trim() : '';
+        const lastName = (document.getElementById('lastName') && document.getElementById('lastName').value) ? document.getElementById('lastName').value.trim() : '';
+        const email = (document.getElementById('email') && document.getElementById('email').value) ? document.getElementById('email').value.trim() : '';
+        const phone = (document.getElementById('phone') && document.getElementById('phone').value) ? document.getElementById('phone').value.trim() : '';
+        const subject = (document.getElementById('subject') && document.getElementById('subject').value) ? document.getElementById('subject').value : '';
+        const message = (document.getElementById('message') && document.getElementById('message').value) ? document.getElementById('message').value.trim() : '';
+
         if (phone.length !== 10 || !/^\d{10}$/.test(phone)) {
-            formMessage.classList.remove('d-none');
-            formMessage.classList.remove('alert-success');
-            formMessage.classList.add('alert-danger');
-            formMessage.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Please enter a valid 10-digit mobile number.';
-            formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            if (formMessage) {
+                formMessage.classList.remove('d-none', 'alert-success');
+                formMessage.classList.add('alert-danger');
+                formMessage.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Please enter a valid 10-digit mobile number.';
+                formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
             return;
         }
 
-        // Show loading state
-        submitBtn.disabled = true;
-        btnText.classList.add('d-none');
-        btnSpinner.classList.remove('d-none');
-        formMessage.classList.add('d-none');
+        if (submitBtn) submitBtn.disabled = true;
+        if (btnText) btnText.classList.add('d-none');
+        if (btnSpinner) btnSpinner.classList.remove('d-none');
+        if (formMessage) formMessage.classList.add('d-none');
 
-        // Prepare email template parameters
+        // Recipient: always rahulkumar53500@gmail.com; template "To Email" must be {{to_email}}
         const templateParams = {
-            to_email: EMAILJS_CONFIG.ADMIN_EMAIL,
+            to_email: RECIPIENT_EMAIL,
             to_name: 'Admin',
-            from_name: `${firstName} ${lastName}`,
-            from_email: email,
+            from_name: (firstName + ' ' + lastName).trim() || 'Website Guest',
+            from_email: email || '',
             phone: phone,
-            subject: subject,
+            subject: subject || 'Contact form',
             message: message,
-            reply_to: email,
-            user_email: email,
-            user_name: `${firstName} ${lastName}`,
+            guest: '',
+            from_date: '',
+            to_date: '',
+            room_type: '',
+            reply_to: email || '',
+            user_email: email || '',
+            user_name: (firstName + ' ' + lastName).trim() || 'Website Guest',
             user_phone: phone
         };
 
-        try {
-            // Check if EmailJS is configured
-            if (!EMAILJS_CONFIG.PUBLIC_KEY || EMAILJS_CONFIG.PUBLIC_KEY === 'YOUR_PUBLIC_KEY' ||
-                !EMAILJS_CONFIG.SERVICE_ID || EMAILJS_CONFIG.SERVICE_ID === 'YOUR_SERVICE_ID' ||
-                !EMAILJS_CONFIG.TEMPLATE_ID || EMAILJS_CONFIG.TEMPLATE_ID === 'YOUR_TEMPLATE_ID') {
-                throw new Error('EmailJS is not configured. Please set up your credentials in emailjs-config.js');
+        if (!EMAILJS_CONFIG.PUBLIC_KEY || EMAILJS_CONFIG.PUBLIC_KEY === 'YOUR_PUBLIC_KEY' ||
+            !EMAILJS_CONFIG.SERVICE_ID || EMAILJS_CONFIG.SERVICE_ID === 'YOUR_SERVICE_ID' ||
+            !EMAILJS_CONFIG.TEMPLATE_ID || EMAILJS_CONFIG.TEMPLATE_ID === 'YOUR_TEMPLATE_ID') {
+            if (formMessage) {
+                formMessage.classList.remove('d-none', 'alert-success');
+                formMessage.classList.add('alert-danger');
+                formMessage.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Email service is not configured.';
+                formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
-
-            // Send email using EmailJS
-            const response = await emailjs.send(
-                EMAILJS_CONFIG.SERVICE_ID,
-                EMAILJS_CONFIG.TEMPLATE_ID,
-                templateParams
-            );
-
-            // Success
-            formMessage.classList.remove('d-none');
-            formMessage.classList.remove('alert-danger');
-            formMessage.classList.add('alert-success');
-            formMessage.innerHTML = '<i class="fas fa-check-circle me-2"></i>Thank you! Your message has been sent successfully. We will get back to you soon.';
-            contactForm.reset();
-            
-            // Scroll to message
-            formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            
-        } catch (error) {
-            console.error('EmailJS Error:', error);
-            formMessage.classList.remove('d-none');
-            formMessage.classList.remove('alert-success');
-            formMessage.classList.add('alert-danger');
-            
-            if (error.text && error.text.includes('not configured')) {
-                formMessage.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Email service is not configured. Please contact the website administrator.';
-            } else {
-                formMessage.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Sorry, there was an error sending your message. Please try again later or contact us directly.';
-            }
-            
-            // Scroll to message
-            formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        } finally {
-            // Reset button state
-            submitBtn.disabled = false;
-            btnText.classList.remove('d-none');
-            btnSpinner.classList.add('d-none');
+            if (submitBtn) submitBtn.disabled = false;
+            if (btnText) btnText.classList.remove('d-none');
+            if (btnSpinner) btnSpinner.classList.add('d-none');
+            return;
         }
+        ensureEmailJSLoaded().then(function () {
+            if (typeof window.emailjs === 'undefined') {
+                if (formMessage) {
+                    formMessage.classList.remove('d-none', 'alert-success');
+                    formMessage.classList.add('alert-danger');
+                    formMessage.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Email script did not load. Check your connection and try again.';
+                    formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+                if (submitBtn) submitBtn.disabled = false;
+                if (btnText) btnText.classList.remove('d-none');
+                if (btnSpinner) btnSpinner.classList.add('d-none');
+                return;
+            }
+            window.emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+            window.emailjs.send(EMAILJS_CONFIG.SERVICE_ID, EMAILJS_CONFIG.TEMPLATE_ID, templateParams)
+                .then(function () {
+                    if (formMessage) {
+                        formMessage.classList.remove('d-none', 'alert-danger');
+                        formMessage.classList.add('alert-success');
+                        formMessage.innerHTML = '<i class="fas fa-check-circle me-2"></i>Thank you! Your message has been sent successfully. We will get back to you soon.';
+                        formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                    // alert('Thank you! Your message has been sent successfully. We will get back to you soon.');
+                    contactForm.reset();
+                })
+                .catch(function (error) {
+                    console.error('EmailJS Error:', error);
+                    if (formMessage) {
+                        formMessage.classList.remove('d-none', 'alert-success');
+                        formMessage.classList.add('alert-danger');
+                        formMessage.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Sorry, there was an error sending your message. Please try again or email us directly.';
+                        formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                })
+                .finally(function () {
+                    if (submitBtn) submitBtn.disabled = false;
+                    if (btnText) btnText.classList.remove('d-none');
+                    if (btnSpinner) btnSpinner.classList.add('d-none');
+                });
+        });
     });
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    initContactFormWithEmail();
+});
 
 // Enhanced lazy loading for images with loading="lazy"
 document.addEventListener('DOMContentLoaded', () => {

@@ -622,27 +622,56 @@
     <!-- Footer Placeholder -->
     <div id="footer-placeholder"></div>
 
-    <!-- Search Request Modal: gradient background -->
+    <!-- Search Request Modal: font, design & background tuned to site -->
     <style>
         #searchRequestModal .modal-content {
-            background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 35%, #dee2e6 70%, #d3d8dc 100%);
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(145deg, #fdfbf7 0%, #f8f6f0 40%, #f0ede6 100%);
             color: #1a1a1a;
             border: 1px solid rgba(0,0,0,0.08);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+            border-radius: 8px;
+            overflow: hidden;
         }
         #searchRequestModal .modal-header {
-            background: linear-gradient(180deg, #ffffff 0%, #f1f3f5 100%);
-            border-bottom: 1px solid rgba(0,0,0,0.1);
+            background: linear-gradient(180deg, #fffdf9 0%, #f8f6f0 100%);
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            padding: 1rem 1.25rem;
         }
-        #searchRequestModal .modal-title { color: #1a1a1a; font-weight: 600; }
+        #searchRequestModal .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
         #searchRequestModal .modal-body {
-            background: linear-gradient(180deg, #fafbfc 0%, #f1f3f5 100%);
+            background: linear-gradient(180deg, #faf9f5 0%, #f5f3ee 100%);
+            padding: 1.25rem 1.25rem;
+        }
+        #searchRequestModal .form-label {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9375rem;
+            color: #333;
+            font-weight: 500;
+        }
+        #searchRequestModal .form-control {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9375rem;
+            border-radius: 5px;
+            border: 1px solid #d0d0d0;
+            padding: 0.5rem 0.75rem;
         }
         #searchRequestModal .modal-footer {
-            background: linear-gradient(180deg, #e9ecef 0%, #dee2e6 100%);
-            border-top: 1px solid rgba(0,0,0,0.1);
+            background: linear-gradient(180deg, #f0ede6 0%, #e8e5dd 100%);
+            border-top: 1px solid rgba(0,0,0,0.08);
+            padding: 0.75rem 1.25rem;
         }
-        #searchRequestModal .form-label { color: #333; }
+        #searchRequestModal .modal-footer .btn {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            border-radius: 5px;
+        }
         .modal-backdrop.show { background-color: #000 !important; opacity: 0.55 !important; }
     </style>
     <div class="modal fade" id="searchRequestModal" tabindex="-1" aria-labelledby="searchRequestModalLabel" aria-hidden="true">
